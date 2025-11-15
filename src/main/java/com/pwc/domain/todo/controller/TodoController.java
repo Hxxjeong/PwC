@@ -18,7 +18,7 @@ public class TodoController {
     private final TodoService todoService;
 
     // 생성
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MASTER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @PostMapping
     public RspTemplate<TodoRspDto> createTodo(@RequestBody TodoReqDto dto) {
         return new RspTemplate<>(HttpStatus.CREATED, "Todo가 생성되었습니다.", todoService.createTodo(dto));
@@ -38,14 +38,14 @@ public class TodoController {
     }
 
     // 수정
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MASTER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @PatchMapping("/{todoId}")
     public RspTemplate<TodoRspDto> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoReqDto.UpdateDto dto) {
         return new RspTemplate<>(HttpStatus.OK, "Todo가 수정되었습니다.", todoService.updateTodo(todoId, dto));
     }
 
     // 삭제
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MASTER')")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @DeleteMapping("/{todoId}")
     public RspTemplate<Void> deleteTodo(@PathVariable("todoId") Long todoId) {
         todoService.deleteTodo(todoId);

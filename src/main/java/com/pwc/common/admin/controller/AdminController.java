@@ -14,17 +14,17 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 public class AdminController {
     private final AdminService adminService;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    // 수정
     @PatchMapping("/{todoId}")
     public RspTemplate<TodoRspDto> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoReqDto dto) {
         return new RspTemplate<>(HttpStatus.OK, "todo가 수정되었습니다.", adminService.updateTodo(todoId, dto));
     }
 
     // 삭제
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping("/{todoId}")
     public RspTemplate<Void> deleteTodo(@PathVariable("todoId") Long todoId) {
         adminService.deleteTodo(todoId);
@@ -32,14 +32,12 @@ public class AdminController {
     }
 
     // 모든 항목 조회
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     public RspTemplate<List<TodoRspDto>> findAllTodos() {
         return new RspTemplate<>(HttpStatus.OK, "todo 조회 완료", adminService.getTodo());
     }
 
     // 삭제된 투두 복원
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PatchMapping("/restore/{todoId}")
     public RspTemplate<Void> restoreTodo(@PathVariable("todoId") Long todoId) {
         adminService.undoDelete(todoId);
