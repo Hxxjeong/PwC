@@ -1,6 +1,5 @@
 package com.pwc.domain.todo.repository;
 
-import com.pwc.domain.todo.dto.request.TodoReqDto;
 import com.pwc.domain.todo.entity.Todo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -42,5 +41,4 @@ public interface TodoRepository extends JpaRepository<Todo, Long> {
     // 유저별 최대 seq
     @Query("select max(t.seq) from Todo t where t.createUser = :createUser")
     Optional<Long> findMaxSeqByUser(@Param("createUser") String createUser);
-
 }
