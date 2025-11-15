@@ -76,11 +76,12 @@ public class TodoService {
         String currentUser = SecurityUtil.getCurrentUsername(); // 로그인한 닉네임
 
         // 본인 글인지 확인
-        if(!todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
+        if(!currentUser.equals("admin") && !todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
 
         // 수정
         if(dto.getTitle() != null) todo.setTitle(dto.getTitle());
         if(dto.getDueDate() != null) todo.setDueDate(dto.getDueDate());
+        if(dto.getIsDone() != null) todo.setDone(dto.getIsDone());
 
         // 태그 수정 (기존 태그 삭제 후 새로 등록)
         if(dto.getTagNames() != null) {
@@ -133,7 +134,7 @@ public class TodoService {
         String currentUser = SecurityUtil.getCurrentUsername();
 
         // 본인 글인지 확인
-        if(!todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
+        if(!currentUser.equals("admin") && !todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
 
         todoRepository.deleteTodo(todo.getId());
     }

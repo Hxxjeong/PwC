@@ -41,5 +41,8 @@ public class TodoReqDto {
 
         @Schema(name = "seq", type = "Long")
         private Long seq;
+
+        @Schema(name = "isDone")
+        private Boolean isDone;
     }
 }
