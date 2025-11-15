@@ -34,6 +34,8 @@ public class TodoRspDto {
 
     private Long dDay;
 
+    private boolean isDelete;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

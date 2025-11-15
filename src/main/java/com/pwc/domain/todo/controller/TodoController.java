@@ -40,7 +40,7 @@ public class TodoController {
     // 수정
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_MASTER')")
     @PatchMapping("/{todoId}")
-    public RspTemplate<TodoRspDto> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoReqDto dto) {
+    public RspTemplate<TodoRspDto> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoReqDto.UpdateDto dto) {
         return new RspTemplate<>(HttpStatus.OK, "Todo가 수정되었습니다.", todoService.updateTodo(todoId, dto));
     }
 

@@ -27,4 +27,19 @@ public class TodoReqDto {
         private String tagName;
         private Boolean isDone;
     }
+
+    @Getter
+    public static class UpdateDto {
+        @Schema(name = "title", example = "todo1")
+        private String title;
+
+        @Schema(name = "dueDate", example = "2025-11-30")
+        private LocalDate dueDate;
+
+        @Schema(name = "tagNames", type = "List")
+        private List<String> tagNames;
+
+        @Schema(name = "seq", type = "Long")
+        private Long seq;
+    }
 }

@@ -27,10 +27,14 @@ public class TodoService {
     // 생성
     @Transactional
     public TodoRspDto createTodo(TodoReqDto dto) {
+        String currentUser = SecurityUtil.getCurrentUsername();
+
+        Long maxSeq = todoRepository.findMaxSeqByUser(currentUser).orElse(0L);
+
         Todo todo = Todo.builder()
                 .title(dto.getTitle())
                 .dueDate(dto.getDueDate())
-//                .seq(dto.getSeq())  // 처음에 등록할 때는 제일 위에 오게
+                .seq(maxSeq+1)
                 .isDone(false)
                 .isDelete(false)
                 .tags(new HashSet<>())
@@ -65,7 +69,7 @@ public class TodoService {
 
     // 수정
     @Transactional
-    public TodoRspDto updateTodo(Long todoId, TodoReqDto dto) {
+    public TodoRspDto updateTodo(Long todoId, TodoReqDto.UpdateDto dto) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_TODO));
 
@@ -88,7 +92,36 @@ public class TodoService {
             todo.getTags().addAll(tags);
         }
 
+        // 순서 변경
+        if(dto.getSeq() != null && !dto.getSeq().equals(todo.getSeq())) changeTodoOrder(todo, dto.getSeq());
+
         return TodoRspDto.from(todoRepository.save(todo));
+    }
+
+    private void changeTodoOrder(Todo todo, Long newSeq) {
+        if(todo.isDelete()) throw new BusinessException(ErrorCode.ALREADY_DELETED);
+
+        Long oldSeq = todo.getSeq();
+        List<Todo> userTodos = todoRepository.findByCreateUserOrderBySeq(todo.getCreateUser());
+
+        // 새 seq가 삭제된 항목이면 예외
+        Todo targetTodo = userTodos.stream()
+                .filter(t -> t.getSeq().equals(newSeq))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_TODO));
+        if(targetTodo.isDelete()) throw new BusinessException(ErrorCode.ALREADY_DELETED);
+
+        if (oldSeq < newSeq) {
+            userTodos.stream()
+                    .filter(t -> t.getSeq() > oldSeq && t.getSeq() <= newSeq)
+                    .forEach(t -> t.setSeq(t.getSeq() - 1));
+        } else {
+            userTodos.stream()
+                    .filter(t -> t.getSeq() >= newSeq && t.getSeq() < oldSeq)
+                    .forEach(t -> t.setSeq(t.getSeq() + 1));
+        }
+
+        todo.setSeq(newSeq);
     }
 
     // 삭제

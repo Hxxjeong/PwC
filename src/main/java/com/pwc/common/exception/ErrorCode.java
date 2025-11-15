@@ -14,6 +14,7 @@ public enum ErrorCode {
 
     // 투두
     NOT_FOUND_TODO(404, "존재하지 않는 todo입니다."),
+    ALREADY_DELETED(500, "이미 삭제된 todo입니다."),
     ;
 
     private final int code;
