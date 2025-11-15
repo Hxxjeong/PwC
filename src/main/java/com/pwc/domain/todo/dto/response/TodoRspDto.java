@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,8 @@ public class TodoRspDto {
 
     private boolean isDone;
 
+    private Long dDay;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
@@ -40,6 +43,10 @@ public class TodoRspDto {
     private String updateUser;
 
     public static TodoRspDto from(Todo todo) {
+        // D-Day 계산
+        long dDay = 0;
+        if(todo.getDueDate() != null) dDay = ChronoUnit.DAYS.between(LocalDate.now(), todo.getDueDate());
+
         return TodoRspDto.builder()
                 .id(todo.getId())
                 .title(todo.getTitle())
@@ -47,6 +54,7 @@ public class TodoRspDto {
                 .tagNames(todo.getTags() == null ? null : todo.getTags().stream().map(Tag::getName).collect(Collectors.toSet()))
                 .seq(todo.getSeq())
                 .isDone(todo.isDone())
+                .dDay(dDay)
                 .createTime(todo.getCreateTime())
                 .updateTime(todo.getUpdateTime())
                 .createUser(todo.getCreateUser())
