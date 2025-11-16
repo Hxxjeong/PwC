@@ -18,6 +18,19 @@ import java.util.List;
 public class AdminController {
     private final AdminService adminService;
 
+    // 수정
+    @PatchMapping("/{todoId}")
+    public RspTemplate<TodoRspDto> updateTodo(@PathVariable("todoId") Long todoId, @RequestBody TodoReqDto dto) {
+        return new RspTemplate<>(HttpStatus.OK, "todo가 수정되었습니다.", adminService.updateTodo(todoId, dto));
+    }
+
+    // 삭제
+    @DeleteMapping("/{todoId}")
+    public RspTemplate<Void> deleteTodo(@PathVariable("todoId") Long todoId) {
+        adminService.deleteTodo(todoId);
+        return new RspTemplate<>(HttpStatus.OK, "todo가 삭제되었습니다.");
+    }
+
     // 모든 항목 조회
     @GetMapping
     public RspTemplate<List<TodoRspDto>> findAllTodos() {

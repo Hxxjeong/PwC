@@ -1,5 +1,7 @@
 package com.pwc.common.auth;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,9 +40,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (Exception e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
-                return;
+            }
+            catch (ExpiredJwtException e) { // 토큰이 만료된 경우
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"토큰이 만료되었습니다.\"}");
+            }
+            catch (MalformedJwtException e) {   // 토큰이 유효하지 않은 경우
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"유효하지 않은 토큰입니다.\"}");
+            }
+            catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("{\"error\": \"내부 서버 오류가 발생했습니다.\"}");
             }
         }
 

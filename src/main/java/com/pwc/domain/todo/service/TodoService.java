@@ -76,7 +76,7 @@ public class TodoService {
         String currentUser = SecurityUtil.getCurrentUsername(); // 로그인한 닉네임
 
         // 본인 글인지 확인
-        if(!currentUser.equals("admin") && !todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
+        if(!todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
 
         // 수정
         if(dto.getTitle() != null) todo.setTitle(dto.getTitle());
@@ -134,7 +134,7 @@ public class TodoService {
         String currentUser = SecurityUtil.getCurrentUsername();
 
         // 본인 글인지 확인
-        if(!currentUser.equals("admin") && !todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
+        if(!todo.getCreateUser().equals(currentUser)) throw new BusinessException(ErrorCode.NO_PERMISSION);
 
         todoRepository.deleteTodo(todo.getId());
     }
